@@ -85,6 +85,11 @@ jobs:
         Configuration: ${{ matrix.configuration }}
 
   
+  
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Build msbuild
+      run: msbuild $env:Solution_Name/DebugProcess.csproj -t:$env:Configuration
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Check Files
