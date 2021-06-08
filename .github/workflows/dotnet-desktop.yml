@@ -88,6 +88,5 @@ jobs:
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Check Files
-      run: dir $env:Solution_Name/bin/$env:Configuration
-
+      run: dir 
 
