@@ -40,9 +40,8 @@ name: .NET Core Desktop
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags:
+      - "v*"
 
 jobs:
 
@@ -57,9 +56,7 @@ jobs:
 
     env:
       Solution_Name: DebugProcess                         # Replace with your solution name, i.e. MyWpfApp.sln.
-      Test_Project_Path: your-test-project-path                 # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
-      Wap_Project_Directory: your-wap-project-directory-name    # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
-      Wap_Project_Path: your-wap-project-path                   # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+
 
     steps:
     - name: Checkout
@@ -73,7 +70,29 @@ jobs:
       run: echo $env:Solution_Name $env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
+        
+    - name: Get branch names
+      id: branch-name
+      uses: tj-actions/branch-names@v4.3
+       
+    - name: Set current version as env variable
+      id: versionnumb
+      run: echo "::set-output name=currentversion::v0.2.0"
+             
+    - name: Set current os as env variable
+      id: oschoice
+      run: echo "::set-output name=choice::windows64"
+      
+    - name: Set current date as env variable
+      id: datee
+      run: echo "::set-output name=currentdate::$(date +'%Y-%m-%d_%H%M%S')"
 
+    - name: Set env
+      id: envname
+      run: echo "::set-output name=outname::${{ steps.branch-name.outputs.current_branch }}-${{ steps.oschoice.outputs.choice }}-${{ steps.datee.outputs.currentdate }}"
+          
+    - name: Echo current env
+      run: echo ${{ steps.envname.outputs.outname }}
     # Install the .NET Core workload
     - name: Install .NET Core
       uses: actions/setup-dotnet@v1
@@ -91,32 +110,52 @@ jobs:
       env:
         Configuration: ${{ matrix.configuration }}
 
-  
-  
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Build msbuild  
-      run: msbuild $env:Solution_Name/DebugProcess.csproj /p:Configuration=$env:Configuration
+      run: msbuild $env:Solution_Name/$env:Solution_Name.csproj /p:Configuration=$env:Configuration
       env:
         Configuration: ${{ matrix.configuration }}
-        
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Check Release Build Files
-      run: dir DebugProcess\bin\Release
-      env:
-        Configuration: ${{ matrix.configuration }}
-        
+
                 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Zip Build Files
-      run: Compress-Archive DebugProcess\bin\Release DebugProcess\bin\Release.zip
+      run: Compress-Archive $env:Solution_Name\bin\Release $env:Solution_Name\bin\Release.zip
       env:
         Configuration: ${{ matrix.configuration }}
-        
         
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Check Build Files
-      run: dir DebugProcess\bin
+      run: dir $env:Solution_Name\bin
       env:
         Configuration: ${{ matrix.configuration }}
+        
+            
+    - name: release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: true
+        release_name: ${{ steps.envname.outputs.outname }}
+        tag_name: ${{ steps.envname.outputs.outname }}
+        body_path: ${{github.workspace}}/CHANGELOG.md
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      
+    - name: Echo current release
+      run: echo ${{ steps.envname.outputs.outname }}
+        
+
+
+    - name: Upload Windows Artifact
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        Configuration: ${{ matrix.configuration }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: $env:Solution_Name\bin\Release.zip
+        asset_name: Release.zip
+        asset_content_type: application/vnd.microsoft.portable-executable
         
