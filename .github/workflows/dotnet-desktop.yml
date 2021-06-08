@@ -75,6 +75,10 @@ jobs:
       id: branch-name
       uses: tj-actions/branch-names@v4.3
        
+    - name: Set current solution as env variable
+      id: solutionset
+      run: echo "::set-output name=solution::DebugProcess"
+                    
     - name: Set current version as env variable
       id: versionnumb
       run: echo "::set-output name=currentversion::v0.2.0"
@@ -155,7 +159,7 @@ jobs:
         Configuration: ${{ matrix.configuration }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: $env:Solution_Name\bin\Release.zip
+        asset_path: ./${{ steps.solutionset.outputs.solution }}/bin/Release.zip
         asset_name: Release.zip
         asset_content_type: application/vnd.microsoft.portable-executable
         
