@@ -2,7 +2,13 @@
 
 <a href="https://github.com/vltmedia/DebugProcess-Csharp"><img alt="GitHub" src="https://img.shields.io/badge/github-%23121011.svg?style=flat&logo=github&logoColor=white"/></a><img alt="C#" src="https://img.shields.io/badge/c%23-%23239120.svg?style=flat&logo=c-sharp&logoColor=white"/><img alt=".Net" src="https://img.shields.io/badge/.NET-5C2D91?style=flat&logo=.net&logoColor=white"/>
 
+[![GitHub release](https://img.shields.io/github/release/vltmedia/DebugProcess-Csharp.svg)](https://GitHub.com/vltmedia/DebugProcess-Csharp/releases/)
+
+
+
 Use this small Console app to debug apps that need to send Arguments to be able to see the arguments and write them out to a file in the same location as this apps exe file.
+
+Grab a the precompiled app in the Releases area.
 
 # Usage
 
