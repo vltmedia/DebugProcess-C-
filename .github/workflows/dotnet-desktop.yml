@@ -66,6 +66,13 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
+        
+        
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Current Configuration
+      run: echo $env:Solution_Name $env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
 
     # Install the .NET Core workload
     - name: Install .NET Core
@@ -77,11 +84,6 @@ jobs:
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v1.0.2
 
-    # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Current Configuration
-      run: echo $env:Solution_Name $env:Configuration
-      env:
-        Configuration: ${{ matrix.configuration }}
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
@@ -99,8 +101,22 @@ jobs:
         Configuration: ${{ matrix.configuration }}
         
     # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Check Release Build Files
+      run: dir DebugProcess\bin\Release
+      env:
+        Configuration: ${{ matrix.configuration }}
+        
+                
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Zip Build Files
+      run: Compress-Archive DebugProcess\bin\Release DebugProcess\bin\Release.zip
+      env:
+        Configuration: ${{ matrix.configuration }}
+        
+        
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Check Build Files
       run: dir DebugProcess\bin
       env:
         Configuration: ${{ matrix.configuration }}
-
+        
