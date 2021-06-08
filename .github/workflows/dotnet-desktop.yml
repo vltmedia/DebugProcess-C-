@@ -88,10 +88,10 @@ jobs:
   
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
-    - name: Build msbuild  /t:Restore /p:Configuration=$env:Configuration
-      run: msbuild $env:Solution_Name/DebugProcess.csproj
+    - name: Build msbuild  
+      run: msbuild $env:Solution_Name/DebugProcess.csproj /t:Restore /p:Configuration=$env:Configuration
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Check Build Files
-      run: dir DebugProcess/bin/$env:Configuration
+      run: dir DebugProcess\bin\$env:Configuration
 
